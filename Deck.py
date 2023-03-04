@@ -1,3 +1,5 @@
+import random
+
 from Card import Card
 import Utils
 
@@ -6,27 +8,25 @@ class Deck:
     # num should be 40, maybe 52 or 108, but i'm using 40
 
     def __init__(self):
-        self.deck = []
-        self.initiate_deck()
+        self.cards = [Card(seed, value) for seed in Utils.SEEDS for value in Utils.VALUES]
+        self.deck = dict(zip([c.id for c in self.cards], self.cards))
+        self.players_decks = []
+        self.distribute_cards()
 
-    def initiate_deck(self):
-        for seed in Utils.SEEDS:
-            for value in range(Utils.CARDS_PER_SEED):
-                self.deck.append(Card(value, seed))
+    def distribute_cards(self):
+        cards = self.cards.copy()
+        for _ in range(Utils.PLAYERS_NUMBER):
+            player_deck = random.sample(cards, Utils.CARDS_PER_PLAYER)
+            cards = [card for card in cards if card not in player_deck]
+            self.players_decks.append(sorted(player_deck, key=lambda x: x.value))
 
-    def get_card_by_position(self, position):
-        return self.deck[position]
+    # def get_card_by_position(self, position):
+    #     return self.cards[position]
 
     def print_deck(self):
-        ids = [card.id for card in self.deck]
+        ids = [card.id for card in self.cards]
         print(ids)
 
     def debug_print(self):
-        for card in self.deck:
-            card.debugPrint()
-
-
-def get_card_by_id(id):
-    value, seed = Utils.card__id2value_seed(id)
-    seed_position = Utils.seed__ordering(seed)
-    return Deck.get_card_by_position(seed_position * 10 + value - 1)
+        print(self.players_decks.map(lambda x: x.id))
+        print(self.cards.map(lambda x: x.id))

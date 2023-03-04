@@ -1,7 +1,9 @@
 class Player:
 
-    def __init__(self, nick, pos, team):
+    def __init__(self, nick, pos):
         self.nick = nick
         self.pos = pos
-        self.team = team
+        self.team = None
         self.cards = []
+
+
